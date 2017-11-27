@@ -75,16 +75,17 @@
                 <el-col :span="17">
                   <div style="height:0px;"></div>
                   <el-row >
-                    <!--<el-row style="overflow: hidden;height: 632px;margin: 18px 4px;width:1025px;">-->
-                    <el-row style="overflow: hidden;height: 540px;margin: 18px 4px;width:1025px;">
-
+                    <el-row style="overflow: hidden;height: 632px;margin: 18px 4px;width:1025px;">
                       <div class="map" v-on:click="closeTip()">
                         <!--{{criminalLists}}-->
                         <img :src="positionMap" id="positionMap" width="" alt="" ref="abc">
                         <!--<img :src="mapPhoto" alt="" ref="abc">-->
                         <div  v-for="(item,index) in criminalLists" v-show="item.pointShows" :class="['point', {pointed: true}]"  @click.stop="select(index)"  :style="{top:item.CriminalY+'px',left:item.CriminalX+'px'}" >
                           <img :src="item.pointImg" alt="">
-                          <div style="width: 100px;text-align: center;position: absolute;margin:-61px -42px;">{{item.Name}}</div>
+                          <div v-show="item.nameShow" style="width: 100px;
+    text-align: center;
+    position: absolute;
+    margin: -61px -42px;">{{item.Name}}</div>
                           <div class="pointTop" v-show="item.status">
                             <el-col :span="10">
                               <img :src="item.CriminalPhoto" style="height: 140px;width: 100px;" alt="">
@@ -126,22 +127,13 @@
                       </div>
                     </el-row>
                   </el-row>
-                  <!--<div>-->
-                  <!--<span style="font-size: 20px;color: black;font-weight: 700;">当前区域：</span>-->
-                  <!--<span style="color:#d98900;font-size: 17px;font-weight:700"><span style="display: inline-block;width: 15px;height: 15px;border-radius: 100px;background: #d98900"></span>&nbsp;宽管：{{KGL}}人&nbsp;&nbsp;</span>　-->
-                  <!--<span style="color:#ff0000;font-size: 17px;font-weight:700"><span style="display: inline-block;width: 15px;height: 15px;border-radius: 100px;background: #ff0000"></span>&nbsp;严管：{{YGL}}人&nbsp;&nbsp;</span>　-->
-                  <!--<span style="color:#00b322;font-size: 17px;font-weight:700"><span style="display: inline-block;width: 15px;height: 15px;border-radius: 100px;background: #00b322"></span>&nbsp;普管：{{PGL}}人&nbsp;&nbsp;</span>　-->
-                  <!--<span style="color:#fa00d4;font-size: 17px;font-weight:700"><span style="display: inline-block;width: 15px;height: 15px;border-radius: 100px;background: #fa00d4"></span>&nbsp;考察：{{KCL}}人&nbsp;&nbsp;</span>-->
-                  <!--<span style="color:#020508;font-size: 17px;font-weight:700"><span style="display: inline-block;width: 15px;height: 15px;border-radius: 100px;background: rgba(73,158,250,0)"></span>&nbsp;总共人数：{{KCL+PGL+YGL+KGL}}人&nbsp;&nbsp;</span>-->
-                  <!--</div>-->
-
-                  <div class="personListShows" style="overflow: hidden">
-                    <div class="showList" style=" overflow: auto;height: 137px;width: 1057px;">
-                      <div  :class="['personShow', {personShowed: item.status}]"  v-for="(item,index) in criminalLists" v-on:click="choosePerson(index)" >
-                        <div class="personImg" style="width: 72px;height: 90px"><img :src="item.CriminalPhoto" style="height: 90px;width: 72px;" alt=""></div>
-                        <div class="perName">{{item.Name}}</div>
-                      </div>
-                    </div>
+                  <div>
+                    <span style="font-size: 20px;color: black;font-weight: 700;">当前区域：</span>
+                    <span style="color:#d98900;font-size: 17px;font-weight:700"><span style="display: inline-block;width: 15px;height: 15px;border-radius: 100px;background: #d98900"></span>&nbsp;宽管：{{KGL}}人&nbsp;&nbsp;</span>　
+                    <span style="color:#ff0000;font-size: 17px;font-weight:700"><span style="display: inline-block;width: 15px;height: 15px;border-radius: 100px;background: #ff0000"></span>&nbsp;严管：{{YGL}}人&nbsp;&nbsp;</span>　
+                    <span style="color:#00b322;font-size: 17px;font-weight:700"><span style="display: inline-block;width: 15px;height: 15px;border-radius: 100px;background: #00b322"></span>&nbsp;普管：{{PGL}}人&nbsp;&nbsp;</span>　
+                    <span style="color:#fa00d4;font-size: 17px;font-weight:700"><span style="display: inline-block;width: 15px;height: 15px;border-radius: 100px;background: #fa00d4"></span>&nbsp;考察：{{KCL}}人&nbsp;&nbsp;</span>
+                    <span style="color:#020508;font-size: 17px;font-weight:700"><span style="display: inline-block;width: 15px;height: 15px;border-radius: 100px;background: rgba(73,158,250,0)"></span>&nbsp;总共人数：{{KCL+PGL+YGL+KGL}}人&nbsp;&nbsp;</span>
                   </div>
                 </el-col>
                 <el-col :span="1" style="height:10px;">
@@ -221,16 +213,7 @@
         }
 
       },
-      /*底部选择*/
-      choosePerson:function (index) {
-        for(let i=0;i<this.criminalLists.length;i++){
-          this.criminalLists[i].status=false
-        }
-        this.criminalLists[index].status=true
-        this.criminalLists[index].pointShows=true
 
-
-      },
       /*搜索罪犯*/
       searchSub:function () {
         let vm=this
@@ -271,6 +254,7 @@
               }else if(ManageLevels=="4204"){
                 pointImg=vm.ipImg+"KC.png"
               }
+
               vm.criminalLists.push({
                 PSID:result.PSID.toLowerCase(),
                 Name:vm.personBand[0][result.PSID.toLowerCase()].Name,
@@ -529,7 +513,12 @@
               }else if(ManageLevels=="4204"){
                 pointImg=vm.ipImg+"KC.png"
               }
-
+              var nameShow;
+              if(localStorage.getItem("IsShowPoshytip")==1){
+                nameShow=true
+              }else {
+                nameShow=false
+              }
               vm.criminalLists.push({
                 pointShows:true,
                 PSID:result[i].PSID.toLowerCase(),
@@ -542,6 +531,8 @@
                 ManageLevel:vm.personBand[0][result[i].PSID.toLowerCase()].ManageLevel,
                 CriminalX:result[i].X,
                 CriminalY:result[i].Y,
+                nameShow:nameShow,
+
                 pointImg:pointImg
               })
             }
@@ -723,6 +714,7 @@
               vm.criminalLists.splice(0,vm.criminalLists.length);
               vm.pointRe()
             }
+
             for (let i=0;i<result.length;i++){
               for (let j=0;j<vm.criminalLists.length;j++){
                 if(vm.criminalLists[j].PSID.toLowerCase()==result[i].PSID.toLowerCase()){
@@ -738,105 +730,9 @@
                 }
               }
             }
-//            vm.criminalLists=  [
-//              {Name:"1",
-//                PersonID:1,
-//                OrgName:"三监区",
-//                status:false,
-//                ManageLevelName:"宽管",
-//                CriminalX:"400",
-//                CriminalY:"500",
-//                pointShows:true,
-//                pointImg:"http://10.58.1.178:7706/dist/static/PG.png"},
-//              {Name:"2",
-//                OrgName:"三监区",
-//                status:false,
-//                ManageLevelName:"宽管",
-//                PersonID:2,
-//                CriminalX:"300",
-//                CriminalY:"400",
-//                pointShows:true,
-//                pointImg:"http://10.58.1.178:7706/dist/static/PG.png"},
-//              {Name:"3",
-//                OrgName:"三监区",
-//                status:false,
-//                ManageLevelName:"宽管",
-//                PersonID:3,
-//                CriminalX:"300",
-//                CriminalY:"400",
-//                pointShows:true,
-//                pointImg:"http://10.58.1.178:7706/dist/static/PG.png"},
-//              {Name:"3",
-//                OrgName:"三监区",
-//                status:false,
-//                ManageLevelName:"宽管",
-//                PersonID:4,
-//                CriminalX:"300",
-//                CriminalY:"400",
-//                pointShows:true,
-//                pointImg:"http://10.58.1.178:7706/dist/static/PG.png"},
-//              {Name:"3",
-//                OrgName:"三监区",
-//                status:false,
-//
-//                ManageLevelName:"宽管",
-//                PersonID:5,
-//
-//                CriminalX:"700",
-//                CriminalY:"400",
-//                pointShows:true,
-//                pointImg:"http://10.58.1.178:7706/dist/static/PG.png"},
-//
-//              {Name:"5",
-//                OrgName:"三监区",
-//                status:false,
-//                ManageLevelName:"宽管",
-//                PersonID:7,
-//                CriminalX:"300",
-//                CriminalY:"390",
-//                pointShows:true,
-//                pointImg:"http://10.58.1.178:7706/dist/static/PG.png"},
-//              {Name:"6",
-//                OrgName:"三监区",
-//                status:false,
-//                ManageLevelName:"宽管",
-//                PersonID:8,
-//                CriminalX:"320",
-//                CriminalY:"400",
-//                pointShows:true,
-//                pointImg:"http://10.58.1.178:7706/dist/static/PG.png"},
-//              {Name:"7",
-//                OrgName:"三监区",
-//                status:false,
-//                ManageLevelName:"宽管",
-//                PersonID:9,
-//                CriminalX:"800",
-//                CriminalY:"90",
-//                pointShows:true,
-//                pointImg:"http://10.58.1.178:7706/dist/static/PG.png"},
-//              {Name:"8",
-//                OrgName:"三监区",
-//                status:false,
-//                ManageLevelName:"宽管",
-//                PersonID:89,
-//                CriminalX:"800",
-//                CriminalY:"90",
-//                pointShows:true,
-//                pointImg:"http://10.58.1.178:7706/dist/static/PG.png"},
-//              {Name:"9",
-//                OrgName:"三监区",
-//                status:false,
-//                ManageLevelName:"宽管",
-//                PersonID:89,
-//                CriminalX:"220",
-//                CriminalY:"90",
-//                pointShows:true,
-//                pointImg:"http://10.58.1.178:7706/dist/static/PG.png"},]
 
-            let KG=[]
-            let YG=[]
-            let PG=[]
-            let KC=[]
+
+
             for (let j=0;j<vm.criminalLists.length;j++){
               if(vm.criminalLists[j].ManageLevel=="4201"){
                 KG.push(vm.criminalLists[j])
@@ -847,6 +743,10 @@
               }else if(vm.criminalLists[j].ManageLevel=="4204"){
                 KC.push(vm.criminalLists[j])
               }
+              let KG=[]
+              let YG=[]
+              let PG=[]
+              let KC=[]
               vm.KGL=0
               vm.YGL=0
               vm.PGL=0
@@ -862,6 +762,82 @@
           },
           complete: function (XHR) {
             XHR = null;  //回收资源
+//            vm.criminalLists=  [
+//             {Name:"1",
+//              PersonID:1,
+//              OrgName:"三监区",
+//              status:false,
+//              ManageLevelName:"宽管",
+//              CriminalX:"400",
+//              CriminalY:"500",
+//              pointShows:true,
+//              pointImg:"http://10.58.1.178:7706/dist/static/PG.png"},
+//              {Name:"2",
+//                PersonID:2,
+//                OrgName:"三监区",
+//                status:false,
+//                ManageLevelName:"宽管",
+//                CriminalX:"400",
+//                CriminalY:"500",
+//                pointShows:true,
+//                pointImg:"http://10.58.1.178:7706/dist/static/PG.png"},
+//              {Name:"3",
+//                PersonID:3,
+//                OrgName:"三监区",
+//                status:false,
+//                ManageLevelName:"宽管",
+//                CriminalX:"1400",
+//                CriminalY:"500",
+//                pointShows:true,
+//                pointImg:"http://10.58.1.178:7706/dist/static/PG.png"},
+//              {Name:"4",
+//                PersonID:4,
+//                OrgName:"三监区",
+//                status:false,
+//                ManageLevelName:"宽管",
+//                CriminalX:"400",
+//                CriminalY:"600",
+//                pointShows:true,
+//                pointImg:"http://10.58.1.178:7706/dist/static/PG.png"},
+//              {Name:"5",
+//                PersonID:5,
+//                OrgName:"三监区",
+//                status:false,
+//                ManageLevelName:"宽管",
+//                CriminalX:"100",
+//                CriminalY:"500",
+//                pointShows:true,
+//                pointImg:"http://10.58.1.178:7706/dist/static/PG.png"},
+//              {Name:"6",
+//                PersonID:6,
+//                OrgName:"三监区",
+//                status:false,
+//                ManageLevelName:"宽管",
+//                CriminalX:"100",
+//                CriminalY:"500",
+//                pointShows:true,
+//                pointImg:"http://10.58.1.178:7706/dist/static/PG.png"},
+//              {Name:"7",
+//                PersonID:7,
+//                OrgName:"三监区",
+//                status:false,
+//                ManageLevelName:"宽管",
+//                CriminalX:"100",
+//                CriminalY:"500",
+//                pointShows:true,
+//                pointImg:"http://10.58.1.178:7706/dist/static/PG.png"},
+//              {Name:"8",
+//                PersonID:8,
+//                OrgName:"三监区",
+//                status:false,
+//                ManageLevelName:"宽管",
+//                CriminalX:"150",
+//                CriminalY:"500",
+//                pointShows:true,
+//                pointImg:"http://10.58.1.178:7706/dist/static/PG.png"},
+//
+//            ]
+
           }
         });
 
@@ -916,15 +892,11 @@
               var groups=[]
               if(vm.criminalGroups!=null){
                 for(let m=0;m<vm.criminalGroups.length;m++){
-//                  groups.concat(vm.criminalGroups[m].posMenu[0])
                   for(let b=0;b<vm.criminalGroups[m].posMenu[0].length;b++){
                     groups.push(vm.criminalGroups[m].posMenu[0][b])
                   }
-
                 }
               }
-
-
               for (let m=0;m<vm.criminalLists.length;m++){
                 for (let b=0;b<groups.length;b++){
                   if(groups[b].PersonID==vm.criminalLists[m].PersonID){
@@ -934,7 +906,6 @@
                     vm.criminalLists[m].pointShows=true;
                   }
                 }
-//                vm.criminalLists[m].pointShows=true;
               }
               if (curDivPos.isTotal == undefined) {
                 curDivPos = $.extend(curDivPos, { "isTotal": divTotal });
@@ -966,9 +937,9 @@
       let vm = this
 
 
-//      vm.ipImg='http://'+window.location.host+'/dist/static/'
+      vm.ipImg='http://'+window.location.host+'/dist/static/'
 //      vm.ipImg='../../static/'
-      vm.ipImg='http://10.58.1.178:7706/dist/static/'
+//      vm.ipImg='http://10.58.1.178:7704/dist/static/'
       scaleNum=1
       $.ajax({
         type: "get",
@@ -986,6 +957,7 @@
             if(i==0){
               allMapList[i].status=true
               vm.positionMap=allMapList[i].MapUrl
+//              vm.positionMap="http://10.58.1.178:7704/Maps/7838_20171108160713.svg"
               vm.MapID=allMapList[i].MapFlnkID
             }else {
               allMapList[i].status=false
@@ -1256,22 +1228,4 @@
     float: left;
   }
 
-  .personShow{
-    float: left;
-    margin: 8px 17px;
-    border: 3px solid #5443ff;
-    padding: 0px;
-    height: 117px;
-    width: 72px;
-    -o-text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis
-  }
-  .personShowed{
-    border: 3px solid #ff5718;
-  }
-  .perName{
-    line-height: 30px;
-  }
 </style>

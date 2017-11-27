@@ -17,8 +17,8 @@
             <div class="bodyCon">
               <el-col :span="2"  v-for="(criminal,index) in inCriminals.slice(inA-1,inB)" :key="1">
                 <div  :class="['criminal', {choosedcriminal: criminal.ischoose}]" v-on:click="chooseIn(index)" >
-                  <div style="height: 91px;width: 90px;">
-                  <img :src="criminal.Photo" width="98%" height="85" alt=""/>
+                  <div style="height: 91px;width: 98px;">
+                  <img :src="criminal.Photo" width="100%" height="85" alt=""/>
                   </div>
                   <span class="criminalName">{{ criminal.CriminalName }}</span>
                 </div>
@@ -44,8 +44,8 @@
             <div class="bodyCon" style="height: 135px;">
               <el-col :span="2"  v-for="(criminal,index) in outCriminals.slice(outA-1,outB)" :key="2">
                 <div  :class="['criminal', {choosedcriminal: criminal.ischoose}]" v-on:click="chooseOut(index)" >
-                  <div style="height: 91px;width: 90px;">
-                       <img :src="criminal.Photo" width="98%" height="85" alt=""/>
+                  <div style="height: 91px;width: 98px;">
+                       <img :src="criminal.Photo" width="100%" height="85" alt=""/>
                   </div>
                   <span class="criminalName">{{ criminal.CriminalName}}</span>
                 </div>
@@ -381,7 +381,9 @@
         var submitCriminalSet=setInterval(function () {
           if(localStorage.getItem("placemanID")==0){
 
-          }else {
+          }else if(localStorage.getItem("placemanID")==1){
+
+          }else{
             clearInterval(submitCriminalSet)
             if(subCriminals==[]||subCriminals==''){
               vm.alertText="还没选人"
@@ -403,10 +405,12 @@
                   vm.outChoose.splice(0,vm.outChoose.length)
                   vm.inChoose.splice(0,vm.inChoose.length)
                     localStorage.setItem("placemanID","0")
+
                     vm.alertText="手动确定成功"
                     setTimeout(function () {
                       vm.alertText=""
-//                    vm.$router.push({ path: '/' })
+//                      vm.$router.push({ path: '/' })
+
                     },2000)
 
                   }else {
@@ -419,6 +423,10 @@
                 },
                 complete: function (XHR, TS) {
                   XHR = null;  //回收资源
+                  if(vm.receiveDataMsgType31.length==0){
+                    vm.inCriminals=[]
+                    vm.outCriminals=[]
+                  }
                 }
               })
             }
@@ -441,6 +449,8 @@
         }
         var cancelSet=setInterval(function () {
           if(localStorage.getItem("placemanID")==0){
+
+          }else if(localStorage.getItem("placemanID")==1){
 
           }else {
               clearInterval(cancelSet)
@@ -466,7 +476,7 @@
                   setTimeout(function () {
                     vm.alertText=""
 
-//                vm.$router.push({ path: '/' })
+                vm.$router.push({ path: '/' })
                   },2000)
 
                 }else {
@@ -541,6 +551,7 @@
               vm.inCriminals=hasNotCall
               vm.inPages=Math.ceil(vm.inCriminals.length/24)==0?1:Math.ceil(vm.inCriminals.length/24)
 
+
             }else if(receiveData[i].Status=="2403"){
 
               var outNotCall=receiveData[i]
@@ -559,6 +570,29 @@
 
             }
           }
+
+          /*删除时候当前页码处理---------------------------------------*/
+          if(vm.inNowPage< vm.inPages){
+
+          }else if(vm.inNowPage == vm.inPages) {
+
+          }else if(vm.inNowPage > vm.inPages){
+                vm.inA=vm.inA-24
+                vm.inB=vm.inB-24
+            vm.inNowPage=vm.inPages
+          }
+
+          if(vm.outNowPage< vm.outNowPage){
+
+          }else if(vm.outNowPage==vm.outNowPage){
+
+          }else if(vm.outNowPage> vm.outNowPage ) {
+            vm.outA=vm.outA-12
+            vm.outB=vm.outB-12
+            vm.outNowPage=vm.outNowPage
+          }
+          /*删除时候当前页码处理----------------------------------------------*/
+
           if(hasNotCall.length==0){
             vm.inCriminals=[]
           }

@@ -434,12 +434,11 @@
       },
       delPerson:function (index) {
           var vm = this
-        var r=confirm("确定要删除该人员？");
-        if (r==true)
-        {
-
-//          alert(vm.outCriminals[index+vm.outCriminalsA-1]["CriminalID"])
-
+        this.$confirm('确定要删除该人员?', '提示', {
+          confirmButtonText: '删除',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
           var sendDelPerson = {
             Header: {
               MsgID:"201501260000000031",
@@ -461,13 +460,13 @@
             data:JSON.stringify(sendDelPerson),
             success: function (result) {
               if(result.RET==1){
-                  vm.outCriminals.splice(index+vm.outCriminalsA-1,1)
+                vm.outCriminals.splice(index+vm.outCriminalsA-1,1)
               }else {
-                vm.alertText="删除失败"
-                setTimeout(function () {
-                  vm.alertText=""
-                },2000)
-
+                vm.$message("删除失败")
+//                vm.alertText="删除失败"
+//                setTimeout(function () {
+//                  vm.alertText=""
+//                },2000)
               }
             },
             complete: function (XHR, TS) {
@@ -475,7 +474,51 @@
             }
           })
 
-        }
+        }).catch(() => {
+
+        });
+//        var r=confirm("确定要删除该人员？");
+//        if (r==true)
+//        {
+//
+////          alert(vm.outCriminals[index+vm.outCriminalsA-1]["CriminalID"])
+//
+//          var sendDelPerson = {
+//            Header: {
+//              MsgID:"201501260000000031",
+//              MsgType:21
+//            },
+//            Body: JSON.stringify({
+//              OrgID : localStorage.getItem('OrgID'),
+//              DoorID : localStorage.getItem('DoorID'),
+//              PeopleID :vm.outCriminals[index+vm.outCriminalsA-1]["CriminalID"]
+//            })
+//          }
+//          $.ajax({
+//            type: "get",
+//            contentType: "application/json; charset=utf-8",
+//            dataType: "jsonp",
+//            jsonp: "callback",
+//            async: false,
+//            url: ajaxUrl,
+//            data:JSON.stringify(sendDelPerson),
+//            success: function (result) {
+//              if(result.RET==1){
+//                  vm.outCriminals.splice(index+vm.outCriminalsA-1,1)
+//              }else {
+//                vm.alertText="删除失败"
+//                setTimeout(function () {
+//                  vm.alertText=""
+//                },2000)
+//
+//              }
+//            },
+//            complete: function (XHR, TS) {
+//              XHR = null;  //回收资源
+//            }
+//          })
+//
+//        }
 
       },
 

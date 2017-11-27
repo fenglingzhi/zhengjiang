@@ -10,6 +10,7 @@ import $ from 'jquery'
 import ajax from './assets/ajaxWebApiMethod.js'
 import config from './config.js'
 import Vuex from 'vuex'
+Vue.use(Vuex)
 import echarts from 'echarts'
 // import jqUi from 'jquery-ui'
 

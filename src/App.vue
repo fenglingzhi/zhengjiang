@@ -1323,22 +1323,51 @@
           }
         });
 
-        /* 收工时间 */
+        /* 获取配置项 */
         $.ajax({
           type: "get",
           contentType: "application/json; charset=utf-8",
           dataType: "jsonp",
           jsonp: "callback",
           async: false,
-          data: {OrgID: localStorage.getItem('OrgID')},
-          url: BasicUrl + 'HomeIndex/GetKnockOffTime',
+          url: BasicUrl + 'HomeIndex/GetSysConfig',
           success: function (result) {
-            localStorage.setItem("overTime",result[0].FieldValue)
+              console.log("sssssssss",result)
+            for (let i=0;i<result.length;i++){
+              if(result[i].FieldName=='KnockOffTime'){
+                /*  默认收工时间*/
+                localStorage.setItem("overTime",result[i].FieldValue)
+              }else if(result[i].FieldName=='ClientSingleOrgNeedRefreshCard'){
+                /*  触摸屏切换到出工收工时是否每次都需要刷卡或登录*/
+//                localStorage.setItem("needPassCard",1)
+                localStorage.setItem("needPassCard",result[i].FieldValue)
+              }else if(result[i].FieldName=='IsShowPoshytip'){
+                localStorage.setItem("IsShowPoshytip",result[i].FieldValue)
+              }
+            }
+            console.log(result)
+
           },
           complete: function (XHR, TS) {
             XHR = null;  //回收资源
           }
         });
+        /* 收工时间 */
+//        $.ajax({
+//          type: "get",
+//          contentType: "application/json; charset=utf-8",
+//          dataType: "jsonp",
+//          jsonp: "callback",
+//          async: false,
+//          data: {OrgID: localStorage.getItem('OrgID')},
+//          url: BasicUrl + 'HomeIndex/GetKnockOffTime',
+//          success: function (result) {
+//            localStorage.setItem("overTime",result[0].FieldValue)
+//          },
+//          complete: function (XHR, TS) {
+//            XHR = null;  //回收资源
+//          }
+//        });
         /* 工具基础信息 */
 //        $.ajax({
 //          type: "get",
@@ -1612,54 +1641,61 @@
         /* 报警信息 */
         if (JSON.parse(event.data).Header.MsgType === 2) {
           var alarmNews = JSON.parse(JSON.parse(event.data).Body)
-          console.log("alarmNews",alarmNews)
+//          console.log("alarmNews",alarmNews)
             /* 区域过滤测试后解开 */
           var personIDs=[]
           if (alarmNews.OrgID.toUpperCase() == localStorage.getItem("OrgID")) {
+            var criminalData = alarmNews
+            criminalData.criminalID = vm.criminalList[0][alarmNews.ObjectID].CriminalID
+            criminalData.Photo = vm.criminalList[0][alarmNews.ObjectID].Photo
+            vm.alarmList.unshift(criminalData)
 
-            $.ajax({
-              type: "get",
-              contentType: "application/json; charset=utf-8",
-              dataType: "jsonp",
-              jsonp: "callback",
-              async: false,
-              data:{
-                AreaID:localStorage.getItem("AreaID")
-              },
-              url: BasicUrl + 'CriminalCnt/GetBindCriminalsByArea',
-              success: function (result) {
-                console.log("ssssresultssssssss",result)
-                for (let i=0;i<result.length;i++){
-                  personIDs.push(result[i].FlnkID)
-                }
-                console.log("ssssssssssss",personIDs)
-                if(personIDs.indexOf(alarmNews.ObjectID)!=-1){
-                  var criminalData = alarmNews
-                  criminalData.criminalID = vm.criminalList[0][alarmNews.ObjectID].CriminalID
-                  criminalData.Photo = vm.criminalList[0][alarmNews.ObjectID].Photo
-                  vm.alarmList.unshift(criminalData)
-
-                  /*限制报警条数不超过99*/
-                  vm.alarmList.splice(99,99999999999)
-                  vm.alarmText =  vm.alarmList[0].Description
-                  vm.alarmPages = vm.alarmList.length
-                  if (vm.alarmList.length != 0) {
-                    vm.alertBJTK = true
-                  } else {
-                    vm.alertBJTK = false
-                  }
-
-                }
-
-
-
-              },
-              error: function (err) {
-                console.log(err)
-              }
-            })
-
-
+            /*限制报警条数不超过99*/
+            vm.alarmList.splice(99,99999999999)
+            vm.alarmText =  vm.alarmList[0].Description
+            vm.alarmPages = vm.alarmList.length
+            if (vm.alarmList.length != 0) {
+              vm.alertBJTK = true
+            } else {
+              vm.alertBJTK = false
+            }
+//            $.ajax({
+//              type: "get",
+//              contentType: "application/json; charset=utf-8",
+//              dataType: "jsonp",
+//              jsonp: "callback",
+//              async: false,
+//              data:{
+//                AreaID:localStorage.getItem("AreaID")
+//              },
+//              url: BasicUrl + 'CriminalCnt/GetBindCriminalsByArea',
+//              success: function (result) {
+//                console.log("ssssresultssssssss",result)
+//                for (let i=0;i<result.length;i++){
+//                  personIDs.push(result[i].FlnkID)
+//                }
+//                console.log("ssssssssssss",personIDs)
+//                if(personIDs.indexOf(alarmNews.ObjectID)!=-1){
+//                  var criminalData = alarmNews
+//                  criminalData.criminalID = vm.criminalList[0][alarmNews.ObjectID].CriminalID
+//                  criminalData.Photo = vm.criminalList[0][alarmNews.ObjectID].Photo
+//                  vm.alarmList.unshift(criminalData)
+//
+//                  /*限制报警条数不超过99*/
+//                  vm.alarmList.splice(99,99999999999)
+//                  vm.alarmText =  vm.alarmList[0].Description
+//                  vm.alarmPages = vm.alarmList.length
+//                  if (vm.alarmList.length != 0) {
+//                    vm.alertBJTK = true
+//                  } else {
+//                    vm.alertBJTK = false
+//                  }
+//                }
+//              },
+//              error: function (err) {
+//                console.log(err)
+//              }
+//            })
           }
         }
 
@@ -1757,33 +1793,33 @@
         }
 
         /* 计划任务-返回数据-4 */
-//        if(JSON.parse(event.data).Header.MsgType === 4){
-//          var  plan_task = JSON.parse(JSON.parse(event.data).Body)
-//          console.log('ssssssssssssssssss',plan_task)
-//          if(plan_task.PlanTypeName !== '巡更计划'){
-//            vm.plan = plan_task.PlanTypeName
-//            vm.planStartTime = plan_task.StartTime
-//            vm.planEndTime = plan_task.EndTime
-//            vm.NextTime = plan_task.NextTime
-//            if(vm.plan == '工具清点计划'){
-//              vm.playAudio("toolPlan")
-//              if(vm.canRouter == 1){
-//                vm.$router.push({ path: '/toolcheck' })
-//              } else {
-//                alert('工具清点已经开始，请结束本次操作后开始工具清点')
-//              }
-//            } else if(vm.plan == '人员清点计划'){
-//              vm.playAudio("personPlan")
-//              if(vm.canRouter === 1){
-//                vm.$router.push({ path: '/crimalcheck' })
-//              } else {
-//                alert('人员清点已经开始，请结束本次操作后开始人员清点')
-//              }
-//            }
-//          } else {
-//
-//          }
-//        }
+        if(JSON.parse(event.data).Header.MsgType === 4){
+          var  plan_task = JSON.parse(JSON.parse(event.data).Body)
+          console.log('ssssssssssssssssss',plan_task)
+          if(plan_task.PlanTypeName !== '巡更计划'){
+            vm.plan = plan_task.PlanTypeName
+            vm.planStartTime = plan_task.StartTime
+            vm.planEndTime = plan_task.EndTime
+            vm.NextTime = plan_task.NextTime
+            if(vm.plan == '工具清点计划'){
+              vm.playAudio("toolPlan")
+              if(vm.canRouter == 1){
+                vm.$router.push({ path: '/toolcheck' })
+              } else {
+                vm.$message('工具清点已经开始，请结束本次操作后开始工具清点')
+              }
+            } else if(vm.plan == '人员清点计划'){
+              vm.playAudio("personPlan")
+              if(vm.canRouter === 1){
+                vm.$router.push({ path: '/crimalcheck' })
+              } else {
+                vm.$message('人员清点已经开始，请结束本次操作后开始人员清点')
+              }
+            }
+          } else {
+
+          }
+        }
 
         /* 基础数据更新-5*/
         if(JSON.parse(event.data).Header.MsgType === 5){

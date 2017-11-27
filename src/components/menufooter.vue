@@ -2,7 +2,7 @@
   <div class="menufooter">
     <el-row class="menu_title_wrap">
       <el-col :span="2" class="menu_title"></el-col>
-      <el-col :span="4" class="menu_title" v-for="item in menuList" :key="1">
+      <el-col :span="5" class="menu_title" v-for="item in menuList" :key="1">
         <div @click="gopage(item.path)">{{item.name}}</div>
       </el-col>
       <el-col :span="2" class="menu_title"></el-col>
@@ -19,13 +19,13 @@ export default {
       menuList: [
         {name: '监区概况', path: '/'},
 //        {name: '出工收工', path: '/outwork'},
-//        {name: '人员清点', path: '/crimalcheck'},
+        {name: '人员清点', path: '/crimalcheck'},
         {name: '人员分布', path: '/positionShow'},
 //        {name: '工具清点', path: '/toolcheck'},
         {name: '流动登记', path: '/outregister'},
 //        {name: '互监组管理', path: '/mutualsupervision'},
-        {name: '人员绑卡', path: '/cardbind'},
-        {name: '人员解绑', path: '/cardUnBind'}
+//        {name: '人员绑卡', path: '/cardbind'},
+//        {name: '人员解绑', path: '/cardUnBind'}
 
       ],
     }
